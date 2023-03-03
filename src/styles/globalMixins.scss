@@ -1,0 +1,60 @@
+/* Global mixins */
+
+/* Containers */
+@mixin maxWidthContainer($width: auto, $maxWidth: none, $margin: 0) {
+    width: $width;
+    max-width: $maxWidth;
+    margin: $margin;
+}
+
+/* Positioning elements */
+@mixin stickyPosition {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+}
+
+@mixin containerCenterElementsWithFlex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Images */
+@mixin responsiveImage {
+    margin: auto;
+    object-fit: cover;
+}
+
+/* Scrollbar */
+@mixin customizateScrollbar($appearance: none, $width: 100%, $height: auto, $displayScrollbarButton: none, $background: #797979, $border: 2px solid #f1f2f3, $borderRadius: 1.2rem, $borderRadiusTrack: 0.8rem) {
+    &::-webkit-scrollbar {
+        -webkit-appearance: $appearance;
+        appearance: $appearance;
+    }
+    &::-webkit-scrollbar:vertical {
+        width: $width;
+    }
+    &::-webkit-scrollbar-button:increment,
+    &::-webkit-scrollbar-button {
+        display: none;
+    }
+    &::-webkit-scrollbar:horizontal {
+        height: $height;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: $background;
+        border: $border;
+        border-radius: $borderRadius;
+    }
+    &::-webkit-scrollbar-track {
+        border-radius: $borderRadiusTrack;
+    }
+}
+
+/* Media queries */
+@mixin media-min($breakpoint) {
+    @media screen and (min-width: $breakpoint) {
+        @content;
+    }
+}

@@ -1,0 +1,5 @@
+@import '/src/styles/globalMixins.scss';
+
+.core-components-images-image {
+    @include responsiveImage;
+}
