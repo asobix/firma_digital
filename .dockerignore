@@ -1,0 +1,32 @@
+# DOCKERIGNORE FILE
+
+# Directories
+.vscode
+Documentation
+.git
+node_modules
+build
+
+# PACKAGES FILES
+package-lock.json
+yarn.lock
+CHANGELOG.md
+ISSUE_TEMPLATE.md
+
+# GIT FILES
+.gitignore
+
+# DOCKER FILES
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# CACHE
+.cache/
+
+# TESTING
+request.http
+
+# OTHERS
+desktop.ini
+Llamado de axios.txt

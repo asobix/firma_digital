@@ -15,6 +15,7 @@
 
 .sigCanvas {
   border: 1px solid #ebebeb;
+  /* border: 2px solid red; */
   border-radius: 5px;
   margin-bottom: 10px;
   background: white;
@@ -23,11 +24,11 @@
 .container-signature{
   height: 100%;
   width: 100%;
-  padding-top: 170px !important;
+  /* padding-top: 170px !important; */
   text-align: center;
 
   border-radius: 5px;
-  background: url(https://asesores.segurospiramide.com/strapi/uploads/Banners_pag_web_automovil_7755b39e4e.jpg);
+  background: url("./Image/background.jfif");
   background-position: 50%;
   background-repeat: no-repeat;
   background-size: cover;
@@ -35,13 +36,15 @@
 }
 
 button{
-  background: white;
+  background: red;
+   color: white;
     border: none;
     padding: 15px;
     text-transform: capitalize;
     border-radius: 5px;
     margin: 10px;
     box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    cursor: pointer;
 }
 
 
@@ -54,9 +57,26 @@ button{
 
 @media (min-width: 769px) {
   .sigCanvas {
-    width: 500px;
-    height: 200px;
+    width: 250px;
+    height: 100px;
   }
+}
+
+.container-logo {
+  width: 70px;
+  height: 70px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px -12px rgb(0 0 0 / 42%),
+    0 4px 25px 0px rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
+  margin-left: 13.5rem;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  margin-top: -2rem;
+}
+
+.logo {
+  width: 100%;
 }
 
 .App-logo {
