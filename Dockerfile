@@ -66,7 +66,7 @@ COPY --from=builder --chown=nginx:nginx /home/node/app/build /usr/share/nginx/ht
 
 RUN touch /var/run/nginx.pid && chown nginx:nginx /var/run/nginx.pid  && chown -R nginx:nginx /var/cache/nginx/
 
-EXPOSE 9001
+EXPOSE 9010
 
 USER nginx
 

@@ -41,44 +41,19 @@ function App() {
         className="container-signature"
       >
         <div
-          style={{
-            border: "2px solid red",
-            width: "100%",
-            height: "100%",
-            display: "grid",
-            placeContent: "center",
-          }}
+         className="container-card"
         >
           <div
-            style={{
-              width: "500px",
-              height: "22rem",
-              display: "grid",
-              placeContent: "center",
-              borderRadius: "1rem",
-              background: "white",
-            }}
+          className="card"
           >
             <div className="container-logo">
                 <img src={Logo} className="logo"/>
               </div>
             <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-              }}
+             className="container-signature-limit"
             >
               <div
-                style={{
-                  border: "2px solid #c4c7cf",
-                  width: "350px",
-                  height: "150px",
-                  background: "white",
-                  display: "grid",
-                  placeItems: "center",
-                  borderRadius: '1rem'
-                }}
+                className="container-sigCanvas"
               >
                 <SignatureCanvas
                   ref={signatureRef}
@@ -90,7 +65,7 @@ function App() {
                 />
               </div>
             </div>
-            <div style={{marginTop: '2rem'}}>
+            <div className="container-button">
               <button onClick={handleClear}>Borrar firma</button>
               <button onClick={handleSave}>Guardar firma</button>
             </div>
