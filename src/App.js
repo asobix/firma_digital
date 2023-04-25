@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 // import logo from './logo.svg';
 import "./App.css";
 import SignatureCanvas from "react-signature-canvas";
@@ -31,15 +31,11 @@ function App() {
 
   const handleSave = () => {
     const signature = signatureRef.current.getTrimmedCanvas().toDataURL();
-    const img = new Image()
-    img.src = signature
-    document.body.appendChild(img);
-    console.log(img);
-    if (signature != firma) {
-      alert("Firma guardada correctamente");
-    } else {
-      alert("Por favor Firme antes de guardar");
-    }
+    console.log(signature);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = signature;
+    downloadLink.download = 'image.png';
+    downloadLink.click();
   };
 
   useEffect(() => {
@@ -52,12 +48,8 @@ function App() {
       <div
         className={process.env.REACT_APP_COMPANY !== 'OCEANICA' ? "container-signature" : 'container-signature-oceanica'}
       >
-        <div
-         className="container-card"
-        >
-          <div
-          className="card"
-          >
+        <div className="container-card">
+          <div className="card">
             <div className="container-logo">
                 <img src={process.env.REACT_APP_COMPANY !== 'OCEANICA' ? LogoPiramide : LogoOceanica} className="logo"/>
               </div>
@@ -72,7 +64,7 @@ function App() {
                   className="sigCanvas"
                   penColor="black"
                   canvasProps={{
-                    className: "sigCanvas",
+                    className: 'sigCanvas',
                   }}
                 />
               </div>
