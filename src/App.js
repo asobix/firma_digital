@@ -30,11 +30,13 @@ function App() {
   };
 
   const handleSave = () => {
-    const signature = signatureRef.current.getTrimmedCanvas().toDataURL();
+    // const signature = signatureRef.current.getTrimmedCanvas().toDataURL();
+    const signature = signatureRef.current.toDataURL();
+
     console.log(signature);
     const downloadLink = document.createElement('a');
     downloadLink.href = signature;
-    downloadLink.download = 'image.png';
+    downloadLink.download = 'image.jpg';
     downloadLink.click();
   };
 
@@ -49,20 +51,22 @@ function App() {
         className={process.env.REACT_APP_COMPANY !== 'OCEANICA' ? "container-signature" : 'container-signature-oceanica'}
       >
         <div className="container-card">
-          <div className="card">
-            <div className="container-logo">
-                <img src={process.env.REACT_APP_COMPANY !== 'OCEANICA' ? LogoPiramide : LogoOceanica} className="logo"/>
-              </div>
+          {/* <div className="card"> */}
+            
             <div
              className="container-signature-limit"
             >
               <div
                 className="container-sigCanvas"
               >
+                <div className="container-logo">
+                  <img src={process.env.REACT_APP_COMPANY !== 'OCEANICA' ? LogoPiramide : LogoOceanica} className="logo"/>
+                </div>
                 <SignatureCanvas
                   ref={signatureRef}
                   className="sigCanvas"
                   penColor="black"
+                  backgroundColor='rgba(255,255,255)'
                   canvasProps={{
                     className: 'sigCanvas',
                   }}
@@ -73,7 +77,7 @@ function App() {
               <Button onClick={handleClear}>Borrar firma</Button>
               <Button onClick={handleSave}>Guardar firma</Button>
             </div>
-          </div>
+          {/* </div> */}
         </div>
       </div>
     </>
