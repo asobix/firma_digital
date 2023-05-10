@@ -66,8 +66,8 @@
 
 .container-sigCanvas {
   border: 2px solid #c4c7cf;
-  width: 400px;
-  height: 500px;
+  width: 200px;
+  height: 250px;
   background: white;
   display: grid;
   place-items: center;
@@ -180,8 +180,8 @@
 
 @media (min-width: 769px) {
   .sigCanvas {
-    width: 354px;
-    height: 418px;
+    width: 175px;
+    height: 200px;
   }
 }
 
