@@ -14,7 +14,7 @@
 }
 
 .sigCanvas {
-  border: 1px solid #ebebeb;
+  border: 4px solid #ebebeb;
   /* border: 2px solid red; */
   border-radius: 5px;
   margin-bottom: 10px;
@@ -26,8 +26,7 @@
   height: 100%;
   width: 100%;
   /* padding-top: 170px !important; */
-  text-align: center;
-
+  margin-top: 6rem;
   border-radius: 5px;
   background: url("./Image/background.jfif");
   background-position: 50%;
@@ -66,13 +65,14 @@
 
 .container-sigCanvas {
   border: 2px solid #c4c7cf;
-  width: 200px;
-  height: 250px;
+  width: 70rem;
+  height: 609px;
   background: white;
-  display: grid;
-  place-items: center;
-  border-radius: 1rem;
-  margin-top: 7rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  overflow: scroll;
+  overflow-x: hidden;
 }
 
 @media only screen and (max-width: 400px) {
@@ -86,23 +86,11 @@
       width: 21rem !important;
     }
 
-    .container-logo {
-      visibility: hidden;
-    }
 }
 .container-signature-limit{
   width: 100%;
   display: flex;
   justify-content: center;
-}
-
-.card {
-  width: 400px;
-  height: 500px;
-  display: grid;
-  place-content: center;
-  border-radius: 1rem;
-  background: white;
 }
 
 .container-card {
@@ -114,55 +102,8 @@
 
 .container-button {
   margin-top: 2rem;
-}
-
-
-/* .container-logo {
-  width: 70px;
-  height: 70px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px -12px rgb(0 0 0 / 42%),
-    0 4px 25px 0px rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
-  margin-left: 13.5rem;
-  border-radius: 50%;
-  background: white;
-  position: absolute;
-  margin-top: -2rem;
-} */
-.container-logo {
-  width: 70px;
-  height: 70px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px -12px rgb(0 0 0 / 42%), 0 4px 25px 0px rgb(0 0 0 / 12%), 0 8px 10px -5px rgb(0 0 0 / 20%);
-  /* margin-left: 13.5rem; */
-  border-radius: 50%;
-  background: white;
-  position: absolute;
-  margin-top: -32rem;
-}
-
-.logo {
-  width: 100%;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
 }
 
 @media (max-width: 768px) {
