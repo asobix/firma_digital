@@ -6,6 +6,7 @@ import styled from "styled-components";
 import Checkbox from '../src/Checkbox/Checkbox';
 import { PiramideBrand } from "../src/Brands/PiramideBrand/PiramideBrand";
 import { OceanicaBrand } from "../src/Brands/OceanicaBrand/OceanicaBrand";
+import axios from 'axios'
 
 const Button = styled.button`
   background: ${process.env.REACT_APP_COMPANY !== "OCEANICA"
@@ -25,31 +26,99 @@ const Button = styled.button`
 function App() {
   const signatureRef = useRef();
   const [firma, setFirma] = useState(null);
+  const [digitalInformation, setDigitalInformation] = useState(undefined)
 
+  const name = digitalInformation?.nombre?.split(':')
+  const identification = digitalInformation?.cedula?.split(':')
+  const policy = digitalInformation?.poliza?.split(':')
+  const email = digitalInformation?.correo?.split(':')
   const handleClear = () => {
     signatureRef.current.clear();
   };
+  function DataURIToBlob(dataURI) {
+    console.log(dataURI)
+    const splitDataURI = dataURI.split(',')
+    const byteString = splitDataURI[0].indexOf('base64') >= 0 ? atob(splitDataURI[1]) : decodeURI(splitDataURI[1])
+    const mimeString = splitDataURI[0].split(':')[1].split(';')[0]
 
-  const handleSave = () => {
+    const ia = new Uint8Array(byteString.length)
+    for (let i = 0; i < byteString.length; i++)
+        ia[i] = byteString.charCodeAt(i)
+
+    return new Blob([ia], { type: mimeString })
+  }
+
+  const handleSave = async () => {
     // const signature = signatureRef.current.getTrimmedCanvas().toDataURL();
     const signature = signatureRef.current.toDataURL();
-    const downloadLink = document.createElement("a");
-    downloadLink.href = signature;
-    downloadLink.download = "image.jpg";
-    downloadLink.click();
+    // const dataString = signature.split(',')
+    // const dataStringBase64 = dataString[1]
+
+    // const base64Response = await fetch(`data:image/jpeg;base64,${dataStringBase64}`);
+    // const blob = await base64Response.blob();
+    
+
+    const file = DataURIToBlob(signature)
+    const formData = new FormData();
+    formData.append('myFile', file, 'image.jpg') 
+    console.log(file)
+    // form.append("files", blob);
+    // const downloadLink = document.createElement("a");
+    // downloadLink.href = signature;
+    // downloadLink.download = "image.jpg";
+    // downloadLink.click();
+    // let form = new FormData();
+    // form.append("images", signature);
+
+    const data = await axios.post(`http://dev-segurospiramide.com/digitalizationImage/upload`,formData,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+
   };
+
+
 
   const generateDigitalizationSignature = () => {
     const currentUrl = window.location.href;
-		console.log(currentUrl);
 		var url = new URL(currentUrl);
-		var advisorCode = url.searchParams.get('id');
-		console.log('advisorCode: ', advisorCode);
+		var idpol = url.searchParams.get('idpol');
+    var numcert = url.searchParams.get('numcert');
+  }
+
+  const getCustomerInformation = async ()  => {
+    const data = await axios.post(`http://dev-segurospiramide.com/asg-api/dbo/digital_signature/get_customer_information`,{
+      id_policy: 1783248,
+      id_cert: 1,
+    })
+    setDigitalInformation(JSON.parse(data.data.result))
+  }
+
+  const serverImageExist = async () => {
+    const data = await axios.post(`http://dev-segurospiramide.com/asg-api/dbo/digital_signature/server_image_exists`,{
+      name_image: ''
+    })
+  }
+
+  const saveImageServer = async () => {
+    const data = await axios.post(`http://dev-segurospiramide.com/asg-api/dbo/digital_signature/save_image`,{
+      ctipoid: '',
+      nnumid: 28441014,
+      cdvid: '',
+      carch_firma: ''
+    })
+  }
+
+  const uploadImage = async () => {
+    const data = await axios.post(`http://dev-segurospiramide.com/digitalizationImage/upload`,{
+      myFile: ''
+    })
   }
 
   useEffect(() => {
     setFirma(signatureRef.current.toDataURL());
     generateDigitalizationSignature()
+    getCustomerInformation()
   }, []);
 
   return (
@@ -62,7 +131,6 @@ function App() {
               : "container-signature-oceanica"
           }
         >
-          <div>
             <div className="container-signature-limit">
               <div className="container-sigCanvas">
                 <div
@@ -73,37 +141,34 @@ function App() {
                   }}
                 >
                   <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      lineHeight: "1rem",
-                      position: "relative",
-                    }}
+                    className="text-align"
                   >
                     {
-                      process.env.REACT_APP_COMPANY !== 'OCEANICA' ? <PiramideBrand width="40%" height="40%" /> : <OceanicaBrand width="40%" height="40%" />
+                      process.env.REACT_APP_COMPANY !== 'OCEANICA' ? <PiramideBrand width="40%" height="40%" /> : <img src={require('../src/Brands/OceanicaBrand/assets/images/Oceanica.png')} style={{width: '25%', height: '25%'}}/>
                     }
                     
-                    <p style={{ fontFamily: "sans-serif" }}>
-                      SEGUROS PIRAMIDE, C.A te da la bienvenida.
+                    {digitalInformation === undefined ?  <></> : 
+                    <>
+                    <p>
+                      {digitalInformation.empresa}
                     </p>
-                    <p style={{ fontFamily: "sans-serif" }}>
-                      Completa tu solicitud de póliza HCMI-001001-36660
-                      confirmando la declaración
+                    <p>
+                      {digitalInformation.solicitud}
                     </p>
-                    <p style={{ fontFamily: "sans-serif" }}>
-                      Nombre Completo Titular: JOSE GREGORIO BADILLA GARCIA
+                    <p>
+                      <strong>{name[0]}:</strong>{name[1]}
                     </p>
-                    <p style={{ fontFamily: "sans-serif" }}>
-                      Cédula de Identidad: V-24554728-0
+                    <p>
+                     <strong>{identification[0]}:</strong>{identification[1]}
                     </p>
-                    <p style={{ fontFamily: "sans-serif" }}>
-                      Número de Póliza: HCMI-001001-36660
+                    <p>
+                     <strong>{policy[0]}:</strong>{policy[1]}
                     </p>
-                    <p style={{ fontFamily: "sans-serif" }}>
-                      Correo Electrónico: JOSEBADILLA03@GMAIL.COM
+                    <p>
+                     <strong>{email[0]}:</strong>{email[1]}
                     </p>
+                    </>
+                    }
                   </div>
                 </div>
 
@@ -115,62 +180,32 @@ function App() {
                   }}
                 >
                   <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      position: "relative",
-                    }}
+                    className="text-greement-align"
                   >
                     <p
                       style={{ fontFamily: "sans-serif", textAlign: "justify", textDecoration: 'underline' }}
                     >
                       Declaro bajo fe de juramento que:
                     </p>
-                    <span style={{display: 'flex'}}>
-                    <Checkbox/>
-                    <p
-                      style={{ fontFamily: "sans-serif", textAlign: "justify" }}
+                    
+                    {
+                      digitalInformation?.condiciones?.map((item,i)=>(
+                        <>
+                        <span style={{display: 'flex'}} key={i}>
+                        <Checkbox />
+                    <p 
                     >
-                      El dinero utilizado para el pago de la prima proviene de
-                      una fuente ilícita y, por lo tanto, no tiene relación
-                      alguna con fondos o recursos productos de actividades a
-                      que se refiere la Ley Orgánica Contra la Delincuencia
-                      Organizada y Financiamiento al Terrorismo
+                     {item.DESCRIP}
                     </p>
                     </span>
-                    <span style={{display: 'flex'}}>
-                    <Checkbox/>
-                    <p
-                      style={{ fontFamily: "sans-serif", textAlign: "justify" }}
-                    >
-                      La información suministrada es correcta y exacta, y no se
-                      omite ningún hecho o circunstancia que pueda disminuir o
-                      reducir la gravedad del riesgo, o alterar el análisis
-                      correspondiente; por lo que cualquier omisión o
-                      tergiversación en la información suministrada, o la falta
-                      de remisión de los recaudos necesarios y exigidos por
-                      Oceánica de Seguros, C.A./Pirámide de Seguros, C.A. podrá
-                      dar lugar a la negativa de emisión de la póliza o
-                      terminación del Contrato.
-                    </p>
-                    </span>
-                   <span style={{display: 'flex'}}>
-                   <Checkbox/>
-                   <p
-                      style={{ fontFamily: "sans-serif", textAlign: "justify" }}
-                    >
-                      Autorizo (amos) la verificación de la información
-                      suministrada, así como para proveerla a terceros para
-                      fines de la evaluación de riesgo y/o siniestros. La
-                      presente Solicitud no otorga cobertura provisional, ni
-                      implica compromiso de aceptar la cotización por parte del
-                      Asegurador.
-                    </p>
-                   </span>
+                        </>
+                      ))
+                    }
+                  
                   </div>
                 </div>
-                <div style={{display: 'flex', justifyContent: 'center'}}>
+                
+                <div style={{display: 'flex', justifyContent: 'center', background: '#e7e9ec', paddingTop: '0.5rem', marginTop: '1rem'}}>
                 <SignatureCanvas
                   ref={signatureRef}
                   className="sigCanvas"
@@ -187,7 +222,6 @@ function App() {
             </div>
               </div>
             </div>
-          </div>
         </div>
       </Layout>
     </>

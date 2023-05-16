@@ -1,14 +1,14 @@
 import React from "react";
 import CheckboxController from "@mui/material/Checkbox";
-import { red } from "@mui/material/colors";
+import { red, blue } from "@mui/material/colors";
 
 const Checkbox = () => {
   return (
     <CheckboxController
       sx={{
-        color: red[600],
+        color: process.env.REACT_APP_COMPANY !== 'OCEANICA' ? red[600] : blue[600],
         "&.Mui-checked": {
-          color: red[600],
+          color: process.env.REACT_APP_COMPANY !== 'OCEANICA' ? red[600] : blue[600],
         },
       }}
     />
