@@ -5,7 +5,7 @@ import Layout from "../src/Layout/Layout";
 import styled from "styled-components";
 import Checkbox from '../src/Checkbox/Checkbox';
 import { PiramideBrand } from "../src/Brands/PiramideBrand/PiramideBrand";
-import { OceanicaBrand } from "../src/Brands/OceanicaBrand/OceanicaBrand";
+// import { OceanicaBrand } from "../src/Brands/OceanicaBrand/OceanicaBrand";
 import axios from 'axios'
 
 const Button = styled.button`
@@ -32,11 +32,12 @@ function App() {
   const identification = digitalInformation?.cedula?.split(':')
   const policy = digitalInformation?.poliza?.split(':')
   const email = digitalInformation?.correo?.split(':')
+
   const handleClear = () => {
     signatureRef.current.clear();
   };
+
   function DataURIToBlob(dataURI) {
-    console.log(dataURI)
     const splitDataURI = dataURI.split(',')
     const byteString = splitDataURI[0].indexOf('base64') >= 0 ? atob(splitDataURI[1]) : decodeURI(splitDataURI[1])
     const mimeString = splitDataURI[0].split(':')[1].split(';')[0]
@@ -50,34 +51,26 @@ function App() {
 
   const handleSave = async () => {
     // const signature = signatureRef.current.getTrimmedCanvas().toDataURL();
-    const signature = signatureRef.current.toDataURL();
-    // const dataString = signature.split(',')
-    // const dataStringBase64 = dataString[1]
 
-    // const base64Response = await fetch(`data:image/jpeg;base64,${dataStringBase64}`);
-    // const blob = await base64Response.blob();
-    
-
-    const file = DataURIToBlob(signature)
-    const formData = new FormData();
-    formData.append('myFile', file, 'image.jpg') 
-    console.log(file)
-    // form.append("files", blob);
-    // const downloadLink = document.createElement("a");
-    // downloadLink.href = signature;
-    // downloadLink.download = "image.jpg";
-    // downloadLink.click();
-    // let form = new FormData();
-    // form.append("images", signature);
-
-    const data = await axios.post(`http://dev-segurospiramide.com/digitalizationImage/upload`,formData,
-    {
-      headers: { "Content-Type": "multipart/form-data" },
-    })
+    if (!signatureRef.current.isEmpty()) {
+      const signature = signatureRef.current.toDataURL();
+      const file = DataURIToBlob(signature)
+      const formData = new FormData();
+      formData.append('myFile', file, 'image.jpg') 
+      console.log(signature)
+      const data = await axios.post(`http://dev-segurospiramide.com/digitalizationImage/upload`,formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      alert('Firma guardada')
+    } else {
+      alert('Debe registrar su firma para continuar')
+      return
+    }
 
   };
 
-
+  
 
   const generateDigitalizationSignature = () => {
     const currentUrl = window.location.href;
@@ -106,12 +99,6 @@ function App() {
       nnumid: 28441014,
       cdvid: '',
       carch_firma: ''
-    })
-  }
-
-  const uploadImage = async () => {
-    const data = await axios.post(`http://dev-segurospiramide.com/digitalizationImage/upload`,{
-      myFile: ''
     })
   }
 
@@ -144,7 +131,7 @@ function App() {
                     className="text-align"
                   >
                     {
-                      process.env.REACT_APP_COMPANY !== 'OCEANICA' ? <PiramideBrand width="40%" height="40%" /> : <img src={require('../src/Brands/OceanicaBrand/assets/images/Oceanica.png')} style={{width: '25%', height: '25%'}}/>
+                      process.env.REACT_APP_COMPANY !== 'OCEANICA' ? <PiramideBrand width="40%" height="40%" /> : <img src={require('../src/Brands/OceanicaBrand/assets/images/Oceanica.png')} alt="#" style={{width: '25%', height: '25%'}}/>
                     }
                     
                     {digitalInformation === undefined ?  <></> : 
@@ -165,7 +152,7 @@ function App() {
                      <strong>{policy[0]}:</strong>{policy[1]}
                     </p>
                     <p>
-                     <strong>{email[0]}:</strong>{email[1]}
+                     <strong>{email[0]}:</strong>{email[1].toLowerCase()}
                     </p>
                     </>
                     }
