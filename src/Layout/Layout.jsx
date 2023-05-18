@@ -2,6 +2,7 @@ import React from 'react'
 import { Navbar } from "../Navbar/Navbar";
 import { PiramideBrand } from "../Brands/PiramideBrand/PiramideBrand";
 import { OceanicaBrand } from "../Brands/OceanicaBrand/OceanicaBrand";
+import Backdrop from '../components/Backdrop/Backdrop';
 
 
 const Layout = ({children}) => {
@@ -16,6 +17,7 @@ const Layout = ({children}) => {
           )
         }
       />
+      <Backdrop />
       <main>{children}</main>
     </div>
   )
