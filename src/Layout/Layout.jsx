@@ -1,5 +1,5 @@
 import React from 'react'
-import { Navbar } from "../Navbar/Navbar";
+import { Navbar } from "../components/Navbar/Navbar";
 import { PiramideBrand } from "../Brands/PiramideBrand/PiramideBrand";
 import { OceanicaBrand } from "../Brands/OceanicaBrand/OceanicaBrand";
 import Backdrop from '../components/Backdrop/Backdrop';

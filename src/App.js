@@ -39,6 +39,7 @@ function App() {
   const [openTrue, setOpenTrue] = useState(false);
   const [openFalse, setOpenFalse] = useState(false);
   const [firmaServer, setFirmaServer] = useState()
+  const [imageExist, setImageExist] = useState('')
 
   const { setOpenBackdrop } = useBackdrop();
 
@@ -84,6 +85,7 @@ function App() {
       const file = DataURIToBlob(signature);
       const formData = new FormData();
       formData.append("myFile", file, "image.jpg");
+      setOpenBackdrop(true)
       const data = await axios.post(
         `${CONFIG.services.upload}`,
         formData,
@@ -92,8 +94,9 @@ function App() {
         }
       );
       const response = data.data.url.split('/')[3]
+      setFirmaServer(response)
       saveImageServer(response)
-      setOpenTrue(true);
+      
     } else {
       setOpenFalse(true);
     }
@@ -116,7 +119,7 @@ function App() {
         id_cert: numcert,
       }
     );
-    console.log(JSON.parse(data.data.result))
+    // console.log(JSON.parse(data.data.result))
     setDigitalInformation(JSON.parse(data.data.result));
     setOpenBackdrop(false);
   };
@@ -125,9 +128,18 @@ function App() {
     const data = await axios.post(
       `${CONFIG.services.serverImageExists}`,
       {
-        name_image: "",
+        name_image: firmaServer,
       }
     );
+    setImageExist(data.data.result)
+    if(imageExist == 'SI'){
+      setOpenTrue(true);
+      setOpenBackdrop(false)
+
+    }else if(imageExist === undefined || imageExist === null){
+      alert('No se pudo procesar la solicitud')
+    }
+    console.log(data.data.result)
   };
 
   const saveImageServer = async (firma) => {
@@ -148,7 +160,8 @@ function App() {
   useEffect(() => {
     setFirma(signatureRef.current.toDataURL());
     getCustomerInformation();
-  }, [firmaServer]);
+    serverImageExist()
+  }, [firmaServer, imageExist]);
   return (
     <>
       <Layout>

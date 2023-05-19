@@ -18,6 +18,17 @@
   object-fit: cover;
 }
 
+.container-signature-oceanica{
+  height: 100%;
+  width: 100%;
+  border-radius: 5px;
+  background: url("./Image/background-oceanica.jpg");
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  object-fit: cover;
+}
+
 .container-sigCanvas {
   width: 70rem;
   height: auto;
