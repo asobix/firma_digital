@@ -9,7 +9,8 @@ const CONFIG = {
         upload: `${process.env.REACT_APP_DOCUMENT_UPLOAD}/upload`,
         getCustomerInformation: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/get_customer_information`,
         serverImageExists: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/server_image_exists`,
-        saveImage: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/save_image`
+        saveImage: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/save_image`,
+        conditions: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/save_approved_clauses`
     }
 }
 

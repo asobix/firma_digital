@@ -3,7 +3,9 @@ import "./App.css";
 import SignatureCanvas from "react-signature-canvas";
 import Layout from "Layout/Layout";
 import styled from "styled-components";
-import Checkbox from "components/Checkbox/Checkbox";
+// import Checkbox from "components/Checkbox/Checkbox";
+import Checkbox from "@mui/material/Checkbox";
+
 import { PiramideBrand } from "Brands/PiramideBrand/PiramideBrand";
 // import { OceanicaBrand } from "../src/Brands/OceanicaBrand/OceanicaBrand";
 import axios from "axios";
@@ -12,12 +14,14 @@ import MuiAlert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import CONFIG from "Config/Config";
+import Button from '@mui/material/Button';
+import { useForm } from "react-hook-form";
 
-const Button = styled.button`
+const ButtonCustom = styled(Button)`
   background: ${process.env.REACT_APP_COMPANY !== "OCEANICA"
-    ? "red"
-    : "#4abfaf"};
-  color: white;
+    ? "red !important"
+    : "#4abfaf !important"};
+  color: white !important;
   border: none;
   padding: 15px;
   text-transform: capitalize;
@@ -26,6 +30,7 @@ const Button = styled.button`
   box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%),
     0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
   cursor: pointer;
+  
 `;
 
 const Alert = React.forwardRef(function Alert(props, ref) {
@@ -40,8 +45,11 @@ function App() {
   const [openFalse, setOpenFalse] = useState(false);
   const [firmaServer, setFirmaServer] = useState()
   const [imageExist, setImageExist] = useState('')
+  const [checkboxArrays, setCheckboxArrays] = useState([])
 
+  const [newArrays, setNewArrays] = useState([])
   const { setOpenBackdrop } = useBackdrop();
+  const { handleSubmit, ...objForm } = useForm();
 
   const name = digitalInformation?.nombre;
   const identification = digitalInformation?.cedula;
@@ -96,7 +104,7 @@ function App() {
       const response = data.data.url.split('/')[3]
       setFirmaServer(response)
       saveImageServer(response)
-      
+      conditionsSignature()
     } else {
       setOpenFalse(true);
     }
@@ -139,7 +147,7 @@ function App() {
     }else if(imageExist === undefined || imageExist === null){
       alert('No se pudo procesar la solicitud')
     }
-    console.log(data.data.result)
+    // console.log(data.data.result)
   };
 
   const saveImageServer = async (firma) => {
@@ -157,11 +165,56 @@ function App() {
     );
   };
 
+  const conditionsSignature = async () => {
+    const tipoid = digitalInformation.tipoid
+    const numid = digitalInformation.numid
+    const dvid = digitalInformation.dvid
+    const json = JSON.stringify(checkboxArrays)
+    const data = await axios.post(`${CONFIG.services.conditions}`,{
+      ctipoid: tipoid,
+      nnumid: numid,
+      cdvid: dvid,
+      p_json_param: json
+    })
+  }
+
+  function HandleArrayChecked(array,index) {
+    return array.map((element,i) => {
+      if(i <= index){
+      return{
+          codigo : element.CODIGO,
+          checked : true
+        }
+      }
+    }
+    );
+  }
+
+  function HandleArrayUnChecked(array,index) {
+    return []
+  }
+
+  const handleCheck = (isChecked, index) => {
+  
+    if (isChecked === true) {
+
+      const arrayData = HandleArrayChecked(digitalInformation?.condiciones, index)
+      setCheckboxArrays(arrayData)
+
+      console.log(arrayData, 'arrayDataaa')
+    }
+    else {
+      const arrayData = HandleArrayUnChecked(digitalInformation?.condiciones, index)
+      setCheckboxArrays(arrayData)
+    }
+  }
+
   useEffect(() => {
     setFirma(signatureRef.current.toDataURL());
     getCustomerInformation();
     serverImageExist()
   }, [firmaServer, imageExist]);
+  // console.log(checkboxArrays)
   return (
     <>
       <Layout>
@@ -224,6 +277,7 @@ function App() {
                   width: "100%",
                   display: "flex",
                   justifyContent: "flex-start",
+                  flexDirection: 'column'
                 }}
               >
                 <div className="text-greement-align">
@@ -237,18 +291,22 @@ function App() {
                     Declaro bajo fe de juramento que:
                   </p>
 
-                  {digitalInformation?.condiciones?.map((item, i) => (
-                    <>
-                      <span style={{ display: "flex" }} key={i}>
-                        <Checkbox />
-                        <p>{item.DESCRIP}</p>
-                      </span>
-                    </>
-                  ))}
+                  {digitalInformation?.condiciones?.map((item, i) => 
+                  (
+                        <>
+                          <span style={{ display: "flex" }} key={i}>
+                            <Checkbox
+                            key={i}
+                            onChange={(e) => handleCheck(e.target.checked, i)}
+                            checked={checkboxArrays[i]?.checked === true ? true : false}
+                            />
+                            <p>{item.DESCRIP}</p>
+                          </span>
+                        </>
+                      )
+                  )}
                 </div>
-              </div>
-
-              <div
+                <div
                 style={{
                   display: "flex",
                   justifyContent: "center",
@@ -268,11 +326,14 @@ function App() {
                 />
               </div>
               <div className="container-button">
-                <Button onClick={handleClear}>Borrar firma</Button>
-                <Button onClick={
+                <ButtonCustom variant="contained" onClick={handleClear}>Borrar firma</ButtonCustom>
+                <ButtonCustom variant="contained" disabled={checkboxArrays.length >= 5 ? false : true}
+                 onClick={
                   handleSave
-                }>Guardar firma</Button>
+                }>Guardar firma</ButtonCustom>
               </div>
+              </div>
+
             </div>
           </div>
         </div>
