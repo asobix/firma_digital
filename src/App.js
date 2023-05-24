@@ -47,7 +47,6 @@ function App() {
   const [imageExist, setImageExist] = useState('')
   const [checkboxArrays, setCheckboxArrays] = useState([])
 
-  const [newArrays, setNewArrays] = useState([])
   const { setOpenBackdrop } = useBackdrop();
   const { handleSubmit, ...objForm } = useForm();
 
@@ -165,11 +164,33 @@ function App() {
     );
   };
 
+
+  const handleCheck = (isChecked, item) => {
+  
+    if (isChecked === true) {
+
+    const arrayData = [...checkboxArrays, item]
+    
+    // console.log(arrayData)
+    setCheckboxArrays(arrayData)
+
+    }
+    else {
+      const arrayData = checkboxArrays.filter((e) => e.CODIGO !== item.CODIGO)
+      setCheckboxArrays(arrayData)
+    }
+  }
+
   const conditionsSignature = async () => {
     const tipoid = digitalInformation.tipoid
     const numid = digitalInformation.numid
     const dvid = digitalInformation.dvid
-    const json = JSON.stringify(checkboxArrays)
+    const jsonFormatter = checkboxArrays.map((item)=>{
+     return{
+      codigo: item.CODIGO
+     } 
+    })
+    const json = JSON.stringify(jsonFormatter)
     const data = await axios.post(`${CONFIG.services.conditions}`,{
       ctipoid: tipoid,
       nnumid: numid,
@@ -178,43 +199,12 @@ function App() {
     })
   }
 
-  function HandleArrayChecked(array,index) {
-    return array.map((element,i) => {
-      if(i <= index){
-      return{
-          codigo : element.CODIGO,
-          checked : true
-        }
-      }
-    }
-    );
-  }
-
-  function HandleArrayUnChecked(array,index) {
-    return []
-  }
-
-  const handleCheck = (isChecked, index) => {
-  
-    if (isChecked === true) {
-
-      const arrayData = HandleArrayChecked(digitalInformation?.condiciones, index)
-      setCheckboxArrays(arrayData)
-
-      console.log(arrayData, 'arrayDataaa')
-    }
-    else {
-      const arrayData = HandleArrayUnChecked(digitalInformation?.condiciones, index)
-      setCheckboxArrays(arrayData)
-    }
-  }
-
   useEffect(() => {
     setFirma(signatureRef.current.toDataURL());
     getCustomerInformation();
     serverImageExist()
   }, [firmaServer, imageExist]);
-  // console.log(checkboxArrays)
+  console.log(checkboxArrays)
   return (
     <>
       <Layout>
@@ -265,7 +255,7 @@ function App() {
                       </p>
                       <p>
                         <strong>Correo Electrónico:</strong>
-                        {email.toLowerCase()}
+                        {email === undefined ? '' : email.toLowerCase()}
                       </p>
                     </>
                   )}
@@ -297,8 +287,8 @@ function App() {
                           <span style={{ display: "flex" }} key={i}>
                             <Checkbox
                             key={i}
-                            onChange={(e) => handleCheck(e.target.checked, i)}
-                            checked={checkboxArrays[i]?.checked === true ? true : false}
+                            onChange={(e) => handleCheck(e.target.checked,item)}
+                            // checked={checkboxArrays[i]?.checked === true ? true : false}
                             />
                             <p>{item.DESCRIP}</p>
                           </span>
@@ -327,7 +317,7 @@ function App() {
               </div>
               <div className="container-button">
                 <ButtonCustom variant="contained" onClick={handleClear}>Borrar firma</ButtonCustom>
-                <ButtonCustom variant="contained" disabled={checkboxArrays.length >= 5 ? false : true}
+                <ButtonCustom variant="contained" disabled={checkboxArrays.length < 5 ? true : false}
                  onClick={
                   handleSave
                 }>Guardar firma</ButtonCustom>
