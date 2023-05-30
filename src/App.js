@@ -217,6 +217,18 @@ function App() {
   };
 
   useEffect(() => {
+  if  (checkboxArrays.length === 5){
+    signatureRef.current.on()
+  }
+  else{
+    signatureRef.current.clear()
+    signatureRef.current.off()
+  }
+
+  }, [checkboxArrays])
+  
+
+  useEffect(() => {
     setFirma(signatureRef.current.toDataURL());
     getCustomerInformation();
     serverImageExist();
@@ -355,6 +367,7 @@ function App() {
                     ref={signatureRef}
                     className="sigCanvas"
                     penColor="black"
+                    maxWidth={1.1}
                     backgroundColor="rgba(255,255,255)"
                     canvasProps={{
                       className: "sigCanvas",
