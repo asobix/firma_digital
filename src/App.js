@@ -251,10 +251,12 @@ function App() {
                   width: "100%",
                   display: "flex",
                   justifyContent: "flex-start",
+                  marginTop: '-3rem'
+
                 }}
               >
                 <div className="text-align">
-                  {process.env.REACT_APP_COMPANY !== "OCEANICA" ? (
+                  {/* {process.env.REACT_APP_COMPANY !== "OCEANICA" ? (
                     <PiramideBrand width="40%" height="40%" />
                   ) : (
                     <img
@@ -262,7 +264,7 @@ function App() {
                       alt="#"
                       style={{ width: "25%", height: "25%" }}
                     />
-                  )}
+                  )} */}
 
                   {digitalInformation === undefined ? (
                     <></>
