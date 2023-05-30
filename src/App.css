@@ -61,18 +61,19 @@
   text-align: justify;
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 500px) {
   .text-align {
-    line-height: 1.4rem;
+    line-height: 1rem;
   }
 
   .container-sigCanvas {
-    width: 17rem;
+    width: 19rem;
   }
 
   p {
     text-align: start;
     margin-bottom: -4px;
+    font-size: 12px;
   }
 
 }
@@ -93,7 +94,7 @@
 @media (max-width: 768px) {
   .sigCanvas {
     width: 90%;
-    height: 145px;
+    height: 155px;
   }
 }
 

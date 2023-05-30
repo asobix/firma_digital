@@ -17,9 +17,6 @@ import Button from "@mui/material/Button";
 import { useForm } from "react-hook-form";
 
 const ButtonCustom = styled(Button)`
-  /* background: ${process.env.REACT_APP_COMPANY !== "OCEANICA"
-    ? "red"
-    : "#4abfaf !important"}; */
   color: white !important;
   border: none;
   padding: 15px;
@@ -103,6 +100,24 @@ function App() {
     }
   };
 
+  const updateForm = async () => {
+    try {
+      const currentUrl = window.location.href;
+    var url = new URL(currentUrl);
+      var idpol = parseInt(url.searchParams.get("idpol")) ;
+      var numcert = parseInt(url.searchParams.get("numcert")) ;
+        const params = {
+            id_policy: idpol,
+            id_cert: numcert,
+        }
+        const data = await axios.post(`${CONFIG.services.updateForm}`,params)
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+   
+}
+
   const handleClear = () => {
     signatureRef.current.clear();
   };
@@ -133,7 +148,11 @@ function App() {
       setImageExist(data.data.result);
       if (imageExist == "SI") {
         setOpenTrue(true);
+        updateForm()
         setOpenBackdrop(false);
+        setTimeout(() => {
+        window.location.reload(false);
+      }, "8000");
       } else if (imageExist === undefined || imageExist === null) {
         alert("No se pudo procesar la solicitud");
       }
@@ -247,22 +266,38 @@ function App() {
                           ? null
                           : digitalInformation?.solicitud}
                       </p>
+                      <div>
                       <p>
-                        <strong>Nombre completo titular:</strong>
-                        {name}
+                        <strong>Nombre completo del titular: </strong>
                       </p>
                       <p>
-                        <strong>Cédula de identidad:</strong>
-                        {identification}
+                      {name}
+                      </p>
+                      </div>
+                      <div>
+                      <p>
+                        <strong>Cédula de identidad: </strong>
                       </p>
                       <p>
-                        <strong>Número de Póliza:</strong>
-                        {policy}
+                      {identification}
+                      </p>
+                      </div>
+                      <div>
+                      <p>
+                        <strong>Número de Póliza: </strong>
                       </p>
                       <p>
-                        <strong>Correo Electrónico:</strong>
-                        {email === undefined ? "" : email.toLowerCase()}
+                      {policy}
                       </p>
+                      </div>
+                      <div>
+                      <p>
+                        <strong>Correo Electrónico: </strong>
+                      </p>
+                      <p>
+                      {email === undefined ? "" : email.toLowerCase()}
+                      </p>
+                      </div>
                     </>
                   )}
                 </div>
@@ -282,6 +317,8 @@ function App() {
                       fontFamily: "sans-serif",
                       textAlign: "justify",
                       textDecoration: "underline",
+                      fontWeight: 'bold',
+                      marginBottom: '0.5rem'
                     }}
                   >
                     Declaro bajo fe de juramento que:

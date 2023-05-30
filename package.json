@@ -20,6 +20,7 @@
     "react-signature-canvas": "^1.0.6",
     "sass": "^1.58.3",
     "styled-components": "^5.3.9",
+    "swr": "^2.1.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
