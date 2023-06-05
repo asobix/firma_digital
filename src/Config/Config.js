@@ -11,7 +11,8 @@ const CONFIG = {
         serverImageExists: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/server_image_exists`,
         saveImage: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/save_image`,
         conditions: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/save_approved_clauses`,
-        updateForm: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/update_form`
+        updateForm: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/update_form`,
+        captchat: `${process.env.REACT_APP_BASE_ENDPOINT}security/get_captcha_key`
     }
 }
 

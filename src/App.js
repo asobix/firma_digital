@@ -5,6 +5,7 @@ import Layout from "Layout/Layout";
 import styled from "styled-components";
 import Checkbox from "@mui/material/Checkbox";
 import { red, blue } from "@mui/material/colors";
+import ReCAPTCHA from "react-google-recaptcha";
 
 import { PiramideBrand } from "Brands/PiramideBrand/PiramideBrand";
 import axios from "axios";
@@ -14,7 +15,8 @@ import Snackbar from "@mui/material/Snackbar";
 import Stack from "@mui/material/Stack";
 import CONFIG from "Config/Config";
 import Button from "@mui/material/Button";
-import { useForm } from "react-hook-form";
+import registerStyles from "styles/registerStyle";
+// import { useForm } from "react-hook-form";
 
 const ButtonCustom = styled(Button)`
   color: white !important;
@@ -27,6 +29,14 @@ const ButtonCustom = styled(Button)`
     0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
   cursor: pointer;
 `;
+
+const NewDiv = styled("div")(({ theme }) => {
+  return { ...registerStyles.tCenter };
+});
+
+const NewReCAPTCHA = styled(ReCAPTCHA)(({ theme }) => {
+  return { ...registerStyles.gRecaptcha };
+});
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -41,14 +51,28 @@ function App() {
   const [firmaServer, setFirmaServer] = useState();
   const [imageExist, setImageExist] = useState("");
   const [checkboxArrays, setCheckboxArrays] = useState([]);
+  // const [captchaKey, setCaptchaKey] = useState();
+  // const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
 
+  // let captcha;
+
+  // const setCaptchaRef = (ref) => {
+  //   if (ref) {
+  //     return (captcha = ref);
+  //   }
+  // };
+
+  // function onChangeCaptcha(value) {
+  //   setIsCaptchaVerified(value ? true : false);
+  // }
   const { setOpenBackdrop } = useBackdrop();
-  const { handleSubmit, ...objForm } = useForm();
+  // const { handleSubmit, ...objForm } = useForm();
 
   const name = digitalInformation?.nombre;
   const identification = digitalInformation?.cedula;
   const policy = digitalInformation?.poliza;
   const email = digitalInformation?.correo;
+  const date = digitalInformation?.fecemi;
 
   const handleCloseTrue = (event, reason) => {
     if (reason === "clickaway") {
@@ -101,22 +125,22 @@ function App() {
   };
 
   const updateForm = async () => {
+    setOpenBackdrop(true);
     try {
       const currentUrl = window.location.href;
-    var url = new URL(currentUrl);
-      var idpol = parseInt(url.searchParams.get("idpol")) ;
-      var numcert = parseInt(url.searchParams.get("numcert")) ;
-        const params = {
-            id_policy: idpol,
-            id_cert: numcert,
-        }
-        const data = await axios.post(`${CONFIG.services.updateForm}`,params)
-        return data
+      var url = new URL(currentUrl);
+      var idpol = parseInt(url.searchParams.get("idpol"));
+      var numcert = parseInt(url.searchParams.get("numcert"));
+      const params = {
+        id_policy: idpol,
+        id_cert: numcert,
+      };
+      const data = await axios.post(`${CONFIG.services.updateForm}`, params);
+      setOpenBackdrop(false);
     } catch (error) {
-        console.log(error)
+      console.log(error);
     }
-   
-}
+  };
 
   const handleClear = () => {
     signatureRef.current.clear();
@@ -125,55 +149,62 @@ function App() {
   const getCustomerInformation = async () => {
     try {
       setOpenBackdrop(true);
-    const currentUrl = window.location.href;
-    var url = new URL(currentUrl);
-    var idpol = url.searchParams.get("idpol");
-    var numcert = url.searchParams.get("numcert");
-    const data = await axios.post(`${CONFIG.services.getCustomerInformation}`, {
-      id_policy: idpol,
-      id_cert: numcert,
-    });
-    setDigitalInformation(JSON.parse(data.data.result));
-    setOpenBackdrop(false);
+      const currentUrl = window.location.href;
+      var url = new URL(currentUrl);
+      var idpol = url.searchParams.get("idpol");
+      var numcert = url.searchParams.get("numcert");
+      const data = await axios.post(
+        `${CONFIG.services.getCustomerInformation}`,
+        {
+          id_policy: idpol,
+          id_cert: numcert,
+        }
+      );
+      setDigitalInformation(JSON.parse(data.data.result));
+      setOpenBackdrop(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
   const serverImageExist = async () => {
     try {
+      setOpenBackdrop(true);
       const data = await axios.post(`${CONFIG.services.serverImageExists}`, {
         name_image: firmaServer,
       });
       setImageExist(data.data.result);
       if (imageExist == "SI") {
+        updateForm();
         setOpenTrue(true);
-        updateForm()
-        setOpenBackdrop(false);
         setTimeout(() => {
-        window.location.reload(false);
-      }, "8000");
+          window.location.reload(false);
+        }, "8000");
       } else if (imageExist === undefined || imageExist === null) {
         alert("No se pudo procesar la solicitud");
       }
+      setOpenBackdrop(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
   const saveImageServer = async (firma) => {
     try {
+      setOpenBackdrop(true);
+
       const tipoid = digitalInformation.tipoid;
-    const numid = digitalInformation.numid;
-    const dvid = digitalInformation.dvid;
-    const data = await axios.post(`${CONFIG.services.saveImage}`, {
-      ctipoid: tipoid,
-      nnumid: numid,
-      cdvid: dvid,
-      carch_firma: firma,
-    });
+      const numid = digitalInformation.numid;
+      const dvid = digitalInformation.dvid;
+      const data = await axios.post(`${CONFIG.services.saveImage}`, {
+        ctipoid: tipoid,
+        nnumid: numid,
+        cdvid: dvid,
+        carch_firma: firma,
+      });
+      setOpenBackdrop(false);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -190,50 +221,60 @@ function App() {
 
   const conditionsSignature = async () => {
     try {
-    const tipoid = digitalInformation.tipoid;
-    const numid = digitalInformation.numid;
-    const dvid = digitalInformation.dvid;
-    const dataRecorrido = checkboxArrays.map((item) => {
-      return {
-        CODIGO: item.CODIGO,
+      const tipoid = digitalInformation.tipoid;
+      const numid = digitalInformation.numid;
+      const dvid = digitalInformation.dvid;
+      const dataRecorrido = checkboxArrays.map((item) => {
+        return {
+          CODIGO: item.CODIGO,
+        };
+      });
+
+      const valor = {
+        condiciones: dataRecorrido,
       };
-    });
 
-    const valor = {
-      condiciones: dataRecorrido,
-    };
+      const params = {
+        ctipoid: tipoid,
+        nnumid: numid,
+        cdvid: dvid,
+        p_json_param: JSON.stringify(valor),
+      };
 
-    const params = {
-      ctipoid: tipoid,
-      nnumid: numid,
-      cdvid: dvid,
-      p_json_param: JSON.stringify(valor),
-    };
-
-    const data = await axios.post(`${CONFIG.services.conditions}`, params);
+      const data = await axios.post(`${CONFIG.services.conditions}`, params);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
-  useEffect(() => {
-  if  (checkboxArrays.length === 5){
-    signatureRef.current.on()
-  }
-  else{
-    signatureRef.current.clear()
-    signatureRef.current.off()
-  }
+  // async function getCaptchaKey() {
+  //   try {
+  //     const jsonKey = await axios.post(`${CONFIG.services.captchat}`);
+  //     if (jsonKey && jsonKey.data && jsonKey.data.result) {
+  //       setCaptchaKey(jsonKey.data.result);
+  //     }
+  //     console.log(jsonKey.data.result);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
-  }, [checkboxArrays])
-  
+  useEffect(() => {
+    if (checkboxArrays.length === 5) {
+      signatureRef.current.on();
+    } else {
+      signatureRef.current.clear();
+      signatureRef.current.off();
+    }
+  }, [checkboxArrays]);
 
   useEffect(() => {
     setFirma(signatureRef.current.toDataURL());
     getCustomerInformation();
     serverImageExist();
+    // getCaptchaKey();
   }, [firmaServer, imageExist]);
-  console.log(checkboxArrays);
+  // console.log(checkboxArrays);
   return (
     <>
       <Layout>
@@ -251,21 +292,9 @@ function App() {
                   width: "100%",
                   display: "flex",
                   justifyContent: "flex-start",
-                  marginTop: '-3rem'
-
                 }}
               >
                 <div className="text-align">
-                  {/* {process.env.REACT_APP_COMPANY !== "OCEANICA" ? (
-                    <PiramideBrand width="40%" height="40%" />
-                  ) : (
-                    <img
-                      src={require("../src/Brands/OceanicaBrand/assets/images/Oceanica.png")}
-                      alt="#"
-                      style={{ width: "25%", height: "25%" }}
-                    />
-                  )} */}
-
                   {digitalInformation === undefined ? (
                     <></>
                   ) : (
@@ -281,36 +310,34 @@ function App() {
                           : digitalInformation?.solicitud}
                       </p>
                       <div>
-                      <p>
-                        <strong>Nombre completo del titular: </strong>
-                      </p>
-                      <p>
-                      {name}
-                      </p>
+                        <p>
+                          <strong>Nombre completo del titular: </strong>
+                        </p>
+                        <p>{name}</p>
                       </div>
                       <div>
-                      <p>
-                        <strong>Cédula de identidad: </strong>
-                      </p>
-                      <p>
-                      {identification}
-                      </p>
+                        <p>
+                          <strong>Cédula de identidad: </strong>
+                        </p>
+                        <p>{identification}</p>
                       </div>
                       <div>
-                      <p>
-                        <strong>Número de Póliza: </strong>
-                      </p>
-                      <p>
-                      {policy}
-                      </p>
+                        <p>
+                          <strong>Número de Póliza: </strong>
+                        </p>
+                        <p>{policy}</p>
                       </div>
                       <div>
-                      <p>
-                        <strong>Correo Electrónico: </strong>
-                      </p>
-                      <p>
-                      {email === undefined ? "" : email.toLowerCase()}
-                      </p>
+                        <p>
+                          <strong>Correo Electrónico: </strong>
+                        </p>
+                        <p>{email === undefined ? "" : email.toLowerCase()}</p>
+                      </div>
+                      <div>
+                        <p>
+                          <strong>Fecha de emisión: </strong>
+                        </p>
+                        <p>{date}</p>
                       </div>
                     </>
                   )}
@@ -331,8 +358,8 @@ function App() {
                       fontFamily: "sans-serif",
                       textAlign: "justify",
                       textDecoration: "underline",
-                      fontWeight: 'bold',
-                      marginBottom: '0.5rem'
+                      fontWeight: "bold",
+                      marginBottom: "0.5rem",
                     }}
                   >
                     Declaro bajo fe de juramento que:
@@ -345,9 +372,15 @@ function App() {
                           key={i}
                           onChange={(e) => handleCheck(e.target.checked, item)}
                           sx={{
-                            color: process.env.REACT_APP_COMPANY !== 'OCEANICA' ? red[600] : blue[600],
+                            color:
+                              process.env.REACT_APP_COMPANY !== "OCEANICA"
+                                ? red[600]
+                                : blue[600],
                             "&.Mui-checked": {
-                              color: process.env.REACT_APP_COMPANY !== 'OCEANICA' ? red[600] : blue[600],
+                              color:
+                                process.env.REACT_APP_COMPANY !== "OCEANICA"
+                                  ? red[600]
+                                  : blue[600],
                             },
                           }}
                         />
@@ -356,6 +389,15 @@ function App() {
                     </>
                   ))}
                 </div>
+                {/* <NewDiv>
+                  <NewReCAPTCHA
+                    ref={(r) => setCaptchaRef(r)}
+                    // sitekey={captchaKey}
+                    sitekey='6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
+                    onChange={onChangeCaptcha}
+                  />
+                </NewDiv> */}
+             
                 <div
                   style={{
                     display: "flex",
@@ -377,11 +419,23 @@ function App() {
                   />
                 </div>
                 <div className="container-button">
-                  <ButtonCustom variant="contained" color={process.env.REACT_APP_COMPANY !== "OCEANICA" ? 'error' : 'info'} onClick={handleClear}>
+                  <ButtonCustom
+                    variant="contained"
+                    color={
+                      process.env.REACT_APP_COMPANY !== "OCEANICA"
+                        ? "error"
+                        : "info"
+                    }
+                    onClick={handleClear}
+                  >
                     Borrar firma
                   </ButtonCustom>
                   <ButtonCustom
-                  color={process.env.REACT_APP_COMPANY !== "OCEANICA" ? 'error' : 'info'}
+                    color={
+                      process.env.REACT_APP_COMPANY !== "OCEANICA"
+                        ? "error"
+                        : "info"
+                    }
                     variant="contained"
                     disabled={checkboxArrays.length < 5 ? true : false}
                     onClick={handleSave}
@@ -393,6 +447,7 @@ function App() {
             </div>
           </div>
         </div>
+        
         {!signatureRef?.current?.isEmpty() ? (
           <Stack spacing={2} sx={{ width: "100%" }}>
             <Snackbar
