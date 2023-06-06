@@ -51,22 +51,14 @@ function App() {
   const [firmaServer, setFirmaServer] = useState();
   const [imageExist, setImageExist] = useState("");
   const [checkboxArrays, setCheckboxArrays] = useState([]);
-  // const [captchaKey, setCaptchaKey] = useState();
-  // const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [reCaptcha, setReCaptcha] = useState('')
+  const captchaRef = useRef(null)
+  console.log(captchaRef)
+  const handleSubmit = (e) =>{
+    setReCaptcha(e)
+}
 
-  // let captcha;
-
-  // const setCaptchaRef = (ref) => {
-  //   if (ref) {
-  //     return (captcha = ref);
-  //   }
-  // };
-
-  // function onChangeCaptcha(value) {
-  //   setIsCaptchaVerified(value ? true : false);
-  // }
   const { setOpenBackdrop } = useBackdrop();
-  // const { handleSubmit, ...objForm } = useForm();
 
   const name = digitalInformation?.nombre;
   const identification = digitalInformation?.cedula;
@@ -247,18 +239,6 @@ function App() {
     }
   };
 
-  // async function getCaptchaKey() {
-  //   try {
-  //     const jsonKey = await axios.post(`${CONFIG.services.captchat}`);
-  //     if (jsonKey && jsonKey.data && jsonKey.data.result) {
-  //       setCaptchaKey(jsonKey.data.result);
-  //     }
-  //     console.log(jsonKey.data.result);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
   useEffect(() => {
     if (checkboxArrays.length === 5) {
       signatureRef.current.on();
@@ -274,7 +254,7 @@ function App() {
     serverImageExist();
     // getCaptchaKey();
   }, [firmaServer, imageExist]);
-  // console.log(checkboxArrays);
+  console.log(reCaptcha);
   return (
     <>
       <Layout>
@@ -389,14 +369,14 @@ function App() {
                     </>
                   ))}
                 </div>
-                {/* <NewDiv>
+                <NewDiv>
                   <NewReCAPTCHA
-                    ref={(r) => setCaptchaRef(r)}
+                    ref={captchaRef}
                     // sitekey={captchaKey}
-                    sitekey='6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'
-                    onChange={onChangeCaptcha}
+                    sitekey={`${process.env.REACT_APP_SITE_KEY}`}
+                    onChange={handleSubmit}
                   />
-                </NewDiv> */}
+                </NewDiv>
              
                 <div
                   style={{
@@ -418,7 +398,10 @@ function App() {
                     }}
                   />
                 </div>
-                <div className="container-button">
+                {
+                  reCaptcha !== '' && (
+                    <>
+                    <div className="container-button">
                   <ButtonCustom
                     variant="contained"
                     color={
@@ -443,6 +426,9 @@ function App() {
                     Guardar firma
                   </ButtonCustom>
                 </div>
+                </>
+                  )
+                }
               </div>
             </div>
           </div>
