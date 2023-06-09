@@ -53,7 +53,7 @@ function App() {
   const [checkboxArrays, setCheckboxArrays] = useState([]);
   const [reCaptcha, setReCaptcha] = useState('')
   const captchaRef = useRef(null)
-  console.log(captchaRef)
+  
   const handleSubmit = (e) =>{
     setReCaptcha(e)
 }
@@ -98,27 +98,33 @@ function App() {
   }
 
   const handleSave = async () => {
-    if (!signatureRef.current.isEmpty()) {
-      const signature = signatureRef.current.toDataURL();
-      const file = DataURIToBlob(signature);
-      const formData = new FormData();
-      formData.append("myFile", file, "image.jpg");
-      setOpenBackdrop(true);
-      const data = await axios.post(`${CONFIG.services.upload}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      const response = data.data.url.split("/")[3];
-      setFirmaServer(response);
-      saveImageServer(response);
-      conditionsSignature();
-    } else {
-      setOpenFalse(true);
+    try {
+      if (!signatureRef.current.isEmpty()) {
+        const signature = signatureRef.current.toDataURL();
+        const file = DataURIToBlob(signature);
+        const formData = new FormData();
+        formData.append("myFile", file, "image.jpg");
+        const data = await axios.post(`${CONFIG.services.upload}`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        const response = data.data.url.split("/")[3];
+        setFirmaServer(response);
+        saveImageServer(response);
+        conditionsSignature();
+        updateForm();
+
+      } else {
+        setOpenFalse(true);
+      }
+    } catch (error) {
+      console.log(error)
     }
+   
   };
 
   const updateForm = async () => {
-    setOpenBackdrop(true);
     try {
+      setOpenBackdrop(true)
       const currentUrl = window.location.href;
       var url = new URL(currentUrl);
       var idpol = parseInt(url.searchParams.get("idpol"));
@@ -128,10 +134,20 @@ function App() {
         id_cert: numcert,
       };
       const data = await axios.post(`${CONFIG.services.updateForm}`, params);
-      setOpenBackdrop(false);
+
+      if (imageExist == "SI" || data.data.result == 'OK') {
+        setOpenTrue(true);
+        setTimeout(() => {
+          window.location.reload(false);
+        }, "3000");
+      } else if (imageExist === undefined || imageExist === null) {
+        alert("No se pudo procesar la solicitud");
+      }
+      setOpenBackdrop(false)
     } catch (error) {
       console.log(error);
     }
+
   };
 
   const handleClear = () => {
@@ -161,30 +177,18 @@ function App() {
 
   const serverImageExist = async () => {
     try {
-      setOpenBackdrop(true);
       const data = await axios.post(`${CONFIG.services.serverImageExists}`, {
         name_image: firmaServer,
       });
       setImageExist(data.data.result);
-      if (imageExist == "SI") {
-        updateForm();
-        setOpenTrue(true);
-        setTimeout(() => {
-          window.location.reload(false);
-        }, "8000");
-      } else if (imageExist === undefined || imageExist === null) {
-        alert("No se pudo procesar la solicitud");
-      }
-      setOpenBackdrop(false);
     } catch (error) {
       console.log(error);
     }
+
   };
 
   const saveImageServer = async (firma) => {
     try {
-      setOpenBackdrop(true);
-
       const tipoid = digitalInformation.tipoid;
       const numid = digitalInformation.numid;
       const dvid = digitalInformation.dvid;
@@ -194,7 +198,6 @@ function App() {
         cdvid: dvid,
         carch_firma: firma,
       });
-      setOpenBackdrop(false);
     } catch (error) {
       console.log(error);
     }
@@ -250,11 +253,13 @@ function App() {
 
   useEffect(() => {
     setFirma(signatureRef.current.toDataURL());
-    getCustomerInformation();
     serverImageExist();
-    // getCaptchaKey();
   }, [firmaServer, imageExist]);
-  console.log(reCaptcha);
+
+  useEffect(()=> {
+    getCustomerInformation();
+  },[])
+  // console.log(reCaptcha);
   return (
     <>
       <Layout>

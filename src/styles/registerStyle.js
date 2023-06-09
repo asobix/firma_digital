@@ -7,7 +7,8 @@ const registerStyles = {
       minHeight: "30px"
     },
     tCenter: {
-      textAlign: "center"
+      textAlign: "center",
+      marginTop: '1rem'
     },
     styleItem: {
       textAlign:"center",
