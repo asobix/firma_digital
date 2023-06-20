@@ -12,7 +12,9 @@ const CONFIG = {
         saveImage: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/save_image`,
         conditions: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/save_approved_clauses`,
         updateForm: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/update_form`,
-        captchat: `${process.env.REACT_APP_BASE_ENDPOINT}security/get_captcha_key`
+        captchat: `${process.env.REACT_APP_BASE_ENDPOINT}security/get_captcha_key`,
+        existsSignatureSequence: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/exists_signature_sequence`,
+        updateSequence: `${process.env.REACT_APP_BASE_ENDPOINT}digital_signature/update_sequence ` 
     }
 }
 

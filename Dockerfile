@@ -36,7 +36,7 @@ ENV GENERATE_SOURCEMAP=false
 
 ENV NODE_OPTIONS=openssl-legacy-provider
 
-ENV PUBLIC_URL=/digitalSignature
+ENV PUBLIC_URL=/firma
 
 RUN yarn build
 
@@ -44,7 +44,7 @@ RUN yarn build
 
 FROM nginx:1.21.6-alpine as deployer
 
-ENV PUBLIC_URL=/digitalSignature
+ENV PUBLIC_URL=/firma
 
 RUN apk add --no-cache libc6-compat
 
@@ -56,13 +56,13 @@ WORKDIR /usr/share/nginx/html
 
 RUN rm -rf ./*
 
-RUN mkdir ./digitalSignature
+RUN mkdir ./firma
 
 RUN chown -R nginx:nginx ./
 
 COPY default.conf /etc/nginx/conf.d
 
-COPY --from=builder --chown=nginx:nginx /home/node/app/build /usr/share/nginx/html/digitalSignature
+COPY --from=builder --chown=nginx:nginx /home/node/app/build /usr/share/nginx/html/firma
 
 RUN touch /var/run/nginx.pid && chown nginx:nginx /var/run/nginx.pid  && chown -R nginx:nginx /var/cache/nginx/
 
