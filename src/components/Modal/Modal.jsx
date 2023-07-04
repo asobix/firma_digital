@@ -22,7 +22,7 @@ export default function AlertDialog(props) {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">
-          {"Pirámide de Seguros informa"}
+          {process.env.REACT_APP_COMPANY === 'OCEANICA' ? "Oceánica de Seguros informa"  :  "Pirámide Seguros informa" }
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">

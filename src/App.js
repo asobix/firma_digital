@@ -304,7 +304,7 @@ function App() {
             resultSequence === 'SI' && resultSequence !== '' ? (
               <> 
              <div className="container-sigCanvas-finished">
-                <div style={{height: '8rem', background: 'rgb(206 43 43)',display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                <div style={{height: '8rem', background: 'rgb(138 138 138)',display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <AccessTimeIcon style={{color: 'rgb(212 208 202)', fontSize: '5rem'}}/>
                 </div>
                 <div style={{display: 'flex', justifyContent:'center'}}>
